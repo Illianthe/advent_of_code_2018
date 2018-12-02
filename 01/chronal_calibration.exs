@@ -1,7 +1,7 @@
 defmodule ChronalCalibration do
   def calculate_resulting_frequency(frequency_changes) do
     frequency_changes
-    |> Enum.sum
+    |> Enum.sum()
   end
 
   def find_first_duplicate_frequency(frequency_changes) do
@@ -9,7 +9,7 @@ defmodule ChronalCalibration do
   end
 
   def extract_frequency_changes_from_file(filename \\ "input.txt") do
-    {_status, data} = File.read(filename)
+    {:ok, data} = File.read(filename)
 
     data
     |> String.split("\n", trim: true)
@@ -22,16 +22,28 @@ defmodule ChronalCalibration do
     next_found = Map.put(found, next_acc, true)
 
     cond do
-    found[next_acc] ->
-      next_acc
-    true ->
-      find_duplicate_helper(list, next_index, next_acc, next_found)
+      found[next_acc] ->
+        next_acc
+
+      true ->
+        find_duplicate_helper(list, next_index, next_acc, next_found)
     end
   end
 end
 
-IO.puts("Part 1: #{ChronalCalibration.extract_frequency_changes_from_file |> ChronalCalibration.calculate_resulting_frequency}")
-IO.puts("Part 2: #{ChronalCalibration.extract_frequency_changes_from_file |> ChronalCalibration.find_first_duplicate_frequency}")
+IO.puts(
+  "Part 1: #{
+    ChronalCalibration.extract_frequency_changes_from_file()
+    |> ChronalCalibration.calculate_resulting_frequency()
+  }"
+)
+
+IO.puts(
+  "Part 2: #{
+    ChronalCalibration.extract_frequency_changes_from_file()
+    |> ChronalCalibration.find_first_duplicate_frequency()
+  }"
+)
 
 IO.puts("\n----------\n")
 
