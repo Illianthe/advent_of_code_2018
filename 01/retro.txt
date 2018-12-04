@@ -1,0 +1,7 @@
+- ExUnit appears to always run at the end of script execution
+- Spent a lot of time trying to figure out the standard library
+  - e.g. String.to_integer/1 returns an integer while Integer.parse/1 returns a tuple
+- Got stumped figuring out how to do part 2 the "Elixir way"
+  - Normally (with Ruby/JS/etc.) I would simply store the current frequency and a hash of found frequencies in a couple of local variables and mutate them with a loop that cycles the list. However, variables are immutable in Elixir so a different approach must be used; I ended up with a recursive solution (throwback to my university days).
+  - I later found out that making use of File.stream!/3 along with Stream.cycle/1 and Enum.reduce_while/3 would have made this simpler
+- I ran into serious performance issues trying to track found frequencies. Initially I appended newly found frequencies to the tail of a list which was a terrible idea because it was an O(n) operation. I quickly swapped to prepending, but even that was pretty slow because I had to continually search for whether something was in the list or not (again, an O(n) operation). It was enough to get the answer, however, and a couple minutes later I ended up using a map instead (it turns out a MapSet might have been better).
