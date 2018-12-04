@@ -1,0 +1,6 @@
+- Input was extracted similar to the last problem -- it looks to be a common theme
+- Double-quotes represents a string, single-quotes represents a charlist
+  - Due to the nature of the problem, it made sense to convert all of the extracted strings from the input into charlists
+- For finding boxes with two/three of any letter, it might have been better reducing with an accumulator that stores the count in a map
+- A question mark preceding a character returns its codepoint (e.g. ?a === 97)
+- Converting everything to a charlist and counting might be a mistake if the input wasn't just ASCII -- see graphemes
