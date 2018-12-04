@@ -138,12 +138,40 @@ defmodule Day4 do
 
     sleepy_guard_id * most_sleepy_minute
   end
+
+  def strategy_2(parsed_records) do
+    sleepy_guard =
+      parsed_records
+      |> Enum.reduce(%{}, fn {_date, data}, acc ->
+        %{guard_id: guard_id, minute_event: minute_event} = data
+
+        acc = Map.put_new(acc, guard_id, %{})
+
+        total_minute_sleep_count =
+          Map.merge(
+            acc[guard_id],
+            calculate_minute_sleep_count(minute_event),
+            fn _k, v1, v2 -> v1 + v2 end
+          )
+
+        put_in(acc, [guard_id], total_minute_sleep_count)
+      end)
+      |> Enum.max_by(fn {_guard_id, minute_counts} ->
+        minute_counts |> Map.values() |> Enum.max()
+      end)
+
+    sleepy_guard_id = sleepy_guard |> elem(0)
+    most_sleepy_minute = sleepy_guard |> elem(1) |> Enum.max_by(fn {_k, v} -> v end) |> elem(0)
+
+    sleepy_guard_id * most_sleepy_minute
+  end
 end
 
 result1 = Day4.extract_records() |> Day4.parse_records() |> Day4.strategy_1()
 IO.puts("Part 1: #{result1}")
 
-# IO.puts("Part 2: #{result2}")
+result2 = Day4.extract_records() |> Day4.parse_records() |> Day4.strategy_2()
+IO.puts("Part 2: #{result2}")
 
 IO.puts("\n----------\n")
 
