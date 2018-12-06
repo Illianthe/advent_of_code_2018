@@ -55,13 +55,27 @@ defmodule Day6 do
 
     {left, right, top, bottom}
   end
+
+  def find_encapsulating_region(coordinates, max_distance \\ 10000) do
+    {left, right, top, bottom} = determine_boundaries(coordinates)
+
+    for(x <- left..right, y <- top..bottom, do: {x, y})
+    |> Enum.reduce(0, fn {loc_x, loc_y}, acc ->
+      total_distance =
+        coordinates
+        |> Enum.map(fn {x, y} -> abs(loc_x - x) + abs(loc_y - y) end)
+        |> Enum.sum()
+
+      if total_distance < max_distance, do: acc + 1, else: acc
+    end)
+  end
 end
 
 result1 = Day6.parse_input() |> Day6.largest_area()
 IO.puts("Part 1: #{result1}")
 
-# result2 = Day6.parse_input()
-# IO.puts("Part 2: #{result2}")
+result2 = Day6.parse_input() |> Day6.find_encapsulating_region()
+IO.puts("Part 2: #{result2}")
 
 IO.puts("\n----------\n")
 
@@ -86,5 +100,9 @@ defmodule Day6Test do
 
   test "determine_closest_coordinate" do
     assert determine_closest_coordinate(1, 2, @coordinates) === {1, 1}
+  end
+
+  test "find_encapsulating_region" do
+    assert find_encapsulating_region(@coordinates, 32) === 16
   end
 end
