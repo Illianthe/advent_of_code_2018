@@ -32,7 +32,7 @@ defmodule Day7 do
   def generate_order(ordered_nodes, remaining_nodes, dependencies) do
     next_node =
       dependencies
-      |> Enum.filter(fn {k, v} -> Enum.empty?(v) end)
+      |> Enum.filter(fn {_k, v} -> Enum.empty?(v) end)
       |> Enum.map(&elem(&1, 0))
       |> Enum.min()
 
@@ -57,14 +57,16 @@ defmodule Day7 do
 
   def progress(dependencies, total_seconds, available_workers)
 
-  def progress(dependencies, total_seconds, available_workers) when dependencies === %{} do
+  def progress(dependencies, total_seconds, _available_workers) when dependencies === %{} do
     total_seconds
   end
 
   def progress(dependencies, total_seconds, available_workers) do
     working_nodes =
       dependencies
-      |> Enum.filter(fn {node, {dependencies, seconds_remaining}} -> Enum.empty?(dependencies) end)
+      |> Enum.filter(fn {_node, {dependencies, _seconds_remaining}} ->
+        Enum.empty?(dependencies)
+      end)
       |> Enum.map(&elem(&1, 0))
       |> Enum.sort()
       |> Enum.take(available_workers)
@@ -78,7 +80,7 @@ defmodule Day7 do
 
     completed_nodes =
       updated_dependencies
-      |> Enum.filter(fn {node, {dependencies, seconds_remaining}} -> seconds_remaining === 0 end)
+      |> Enum.filter(fn {_node, {_dependencies, seconds_remaining}} -> seconds_remaining === 0 end)
       |> Enum.map(&elem(&1, 0))
 
     next_dependencies =
