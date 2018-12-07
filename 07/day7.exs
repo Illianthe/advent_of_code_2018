@@ -47,13 +47,60 @@ defmodule Day7 do
 
     generate_order([next_node | ordered_nodes], next_remaining_nodes, next_dependencies)
   end
+
+  def time_to_complete(dependencies, base_time \\ 60, available_workers \\ 5) do
+    dependencies
+    |> Enum.map(fn {k, v} -> {k, {v, k - 65 + base_time + 1}} end)
+    |> Map.new()
+    |> progress(0, available_workers)
+  end
+
+  def progress(dependencies, total_seconds, available_workers)
+
+  def progress(dependencies, total_seconds, available_workers) when dependencies === %{} do
+    total_seconds
+  end
+
+  def progress(dependencies, total_seconds, available_workers) do
+    working_nodes =
+      dependencies
+      |> Enum.filter(fn {node, {dependencies, seconds_remaining}} -> Enum.empty?(dependencies) end)
+      |> Enum.map(&elem(&1, 0))
+      |> Enum.sort()
+      |> Enum.take(available_workers)
+
+    updated_dependencies =
+      working_nodes
+      |> Enum.reduce(%{}, fn working_node, acc ->
+        {dependencies, seconds_remaining} = dependencies[working_node]
+        Map.put(acc, working_node, {dependencies, seconds_remaining - 1})
+      end)
+
+    completed_nodes =
+      updated_dependencies
+      |> Enum.filter(fn {node, {dependencies, seconds_remaining}} -> seconds_remaining === 0 end)
+      |> Enum.map(&elem(&1, 0))
+
+    next_dependencies =
+      dependencies
+      |> Map.merge(updated_dependencies)
+      |> Map.drop(completed_nodes)
+      |> Enum.reduce(%{}, fn {node, {dependencies, seconds_remaining}}, acc ->
+        updated_dependencies =
+          Enum.filter(dependencies, fn e -> !Enum.member?(completed_nodes, e) end)
+
+        Map.put(acc, node, {updated_dependencies, seconds_remaining})
+      end)
+
+    progress(next_dependencies, total_seconds + 1, available_workers)
+  end
 end
 
 result1 = Day7.parse_input() |> Day7.order_of_steps()
 IO.puts("Part 1: #{result1}")
 
-# result2 = Day7.parse_input() |> Day7.order_of_steps()
-# IO.puts("Part 2: #{result2}")
+result2 = Day7.parse_input() |> Day7.time_to_complete()
+IO.puts("Part 2: #{result2}")
 
 IO.puts("\n----------\n")
 
@@ -67,5 +114,9 @@ defmodule Day7Test do
 
   test "order_of_steps" do
     assert order_of_steps(@input) === 'CABDFE'
+  end
+
+  test "time_to_complete" do
+    assert time_to_complete(@input, 0, 2) === 16
   end
 end
