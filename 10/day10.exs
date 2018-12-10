@@ -79,12 +79,3 @@ end
 
 result1 = Day10.parse_input() |> Day10.determine_message()
 IO.puts("Part 1 & 2: #{result1}")
-
-IO.puts("\n----------\n")
-
-ExUnit.start()
-
-defmodule Day10Test do
-  use ExUnit.Case
-  import Day10
-end
