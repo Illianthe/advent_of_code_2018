@@ -78,10 +78,7 @@ defmodule Day10 do
 end
 
 result1 = Day10.parse_input() |> Day10.determine_message()
-IO.puts("Part 1: #{result1}")
-
-# result2 = Day10.parse_input()
-# IO.puts("Part 2: #{result2}")
+IO.puts("Part 1 & 2: #{result1}")
 
 IO.puts("\n----------\n")
 
